@@ -114,6 +114,10 @@
   		// HTTPリクエストの送信
   		xhr.send();
   		
+  		xhr.onerror = function(error){
+        	alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
+       	};
+       
   		return win;
  	};
 })();
