@@ -36,7 +36,7 @@
 			});
 		
 			var label = Ti.UI.createLabel({
-				text:'DEMO for CloudStack API\n\n@CS_API_App\n@shugonumano\n\nhttps://github.com/snumano/CloudStack-API-iPhone-App',
+				text:'App for CloudStack API\n\n@CS_API_App\n@shugonumano\n\nhttps://github.com/snumano/CloudStack-API-iPhone-App',
 				font:{fontSize:15, fontWeight:'bold'},
 				textAlign:'center',
 				color:'#fff'
@@ -74,7 +74,7 @@
 			{title:'Tata'},
 			{title:'NineFold'},
 			{title:'Datapipe'},
-//			{title:'NTTCom'},
+			{title:'NTTCom'},
 //			{title:'IDC'}
 		];
 

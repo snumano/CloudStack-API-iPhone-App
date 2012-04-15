@@ -1,5 +1,6 @@
 (function() {
 	myapp.tab.vm = {};
+	Titanium.include("../subroutine.js");
 	
 	myapp.tab.vm.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt,tab,img){
 		var cmd = "listVirtualMachines";
@@ -19,7 +20,7 @@
     		rightNavButton:btn
 		});
 		
-		var url = myapp.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
+		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
 		
   		// オブジェクトを生成します。
   		var xhr = Ti.Network.createHTTPClient();

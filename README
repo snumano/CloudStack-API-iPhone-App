@@ -1,13 +1,11 @@
- 	DEMO for CloudStack API
- 	version 0.033
- 	
- 	This program is for demo of CloudStack API.
+ 	App for CloudStack API
+ 	version 0.034
+
  	Current version supports followings,
  	*multi cloud services
 	 Tata,Ninefold and more
  	*listvirtulmachines and listvolumes 
  
-
  
     Copyright (c) 2012, Shugo Numano(snumano@cpan.org)
     All rights reserved.

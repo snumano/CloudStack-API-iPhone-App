@@ -1,6 +1,7 @@
 (function() {
 	myapp.tab.volume = {};
-	
+	Titanium.include("../subroutine.js");
+		
 	myapp.tab.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt,tab,img){
 		var cmd = "listVolumes";
 
@@ -19,7 +20,7 @@
     		rightNavButton:btn
 		});
 
-		var url = myapp.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
+		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
 
   		// オブジェクトを生成します。
   		var xhr = Ti.Network.createHTTPClient();
