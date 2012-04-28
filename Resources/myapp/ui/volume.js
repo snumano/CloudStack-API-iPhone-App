@@ -2,22 +2,22 @@
 	myapp.tab.volume = {};
 	Titanium.include("../subroutine.js");
 		
-	myapp.tab.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt,tab,img){
+	myapp.tab.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt,tab){
 		var cmd = "listVolumes";
-
-		var btn = Ti.UI.createButton({
-			backgroundImage:img,
-			height:11,
-			width:16
+		
+		var addBtn = Titanium.UI.createButton({
+			systemButton:Titanium.UI.iPhone.SystemButton.ADD
 		});
-		btn.addEventListener('click', function(){
+		
+		addBtn.addEventListener('click', function(){
 			alert("Not implemented yet.");
 		});
 		
 		var win = Ti.UI.createWindow({  
     		title:cloudName + ':VOLUME',
-    		backgroundColor:'#fff',
-    		rightNavButton:btn
+    		backgroundColor:'white',
+    		barColor:'black',
+    		rightNavButton:addBtn
 		});
 
 		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
@@ -39,24 +39,24 @@
       			var labelId = Ti.UI.createLabel({
         			text:info.id,
         			font:{fontSize:15,fontWeight:'bold'}, textAlign:'left',
-        			color:'#000',top:0, left:3, width:45
+        			color:'#000',top:0, height:60, left:3, width:45
         		});
       			// ラベルを生成
       			var labelName = Ti.UI.createLabel({
         			text:info.name,
         			font:{fontSize:15,fontWeight:'bold'}, textAlign:'left',
-        			color:'#000',top:0, left:50, width:100
+        			color:'#000',top:0, height:60, left:50, width:100
       			});
       			// ラベルを生成
       			var labelState = Ti.UI.createLabel({
         			text:info.state,
         			font:{fontSize:10}, textAlign:'left',
-        			color:'#000',top:0, left:155, width:50
+        			color:'#000',top:0, height:60, left:155, width:50
       			});
       			var labelVmDisplayName = Ti.UI.createLabel({
         			text:info.vmdisplayname,
         			font:{fontSize:10}, textAlign:'left',
-        			color:'#000',top:0, left:210, width:'auto'
+        			color:'#000',top:0, height:60, left:210, width:'auto'
       			});
       			// Cellのクラス名と高さを定義
       			var row = Ti.UI.createTableViewRow({
@@ -105,7 +105,8 @@
 				
 				var detailWin = Ti.UI.createWindow({
 					title: cloudName + ':VOLUME:' + json.listvolumesresponse.volume[event.index].id,
-					backgroundColor: '#fff',
+					backgroundColor: 'white',
+					barColor:'black'
 				});
 		
 				detailWin.add(detailLabel);

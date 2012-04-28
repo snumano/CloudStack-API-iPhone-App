@@ -22,16 +22,19 @@
 		
 		var win = Ti.UI.createWindow({  
     		title:'Setting',
+    		barColor:'black',
     		rightNavButton:infoBtn
 		});
 		
 		var tab = Ti.UI.createTab({  
+			title:'Setting',
     		icon:'img/light_wrench.png',
     		window:win
 		});
 
 		infoBtn.addEventListener('click', function(){
-			var win = Ti.UI.createWindow({  
+			var win = Ti.UI.createWindow({ 
+				barColor:'black', 
     			title:'Info',
 			});
 		
@@ -39,7 +42,7 @@
 				text:'App for CloudStack API\n\n@CS_API_App\n@shugonumano\n\nhttps://github.com/snumano/CloudStack-API-iPhone-App',
 				font:{fontSize:15, fontWeight:'bold'},
 				textAlign:'center',
-				color:'#fff'
+				color:'white'
 			});
 			win.add(label);
 		
@@ -75,7 +78,7 @@
 			{title:'NineFold'},
 			{title:'Datapipe'},
 			{title:'NTTCom'},
-//			{title:'IDC'}
+			{title:'IDCF'}
 		];
 
 		picker.selectionIndicator = true;
@@ -111,7 +114,7 @@
 			width:300,
 			font:{fontSize:15, fontWeight:'bold'},
 			textAlign:'left',
-			color:'#fff'
+			color:'white'
 		});
 		scrollView.add(l1);
 
@@ -153,7 +156,7 @@
 			width:300,
 			font:{fontSize:15, fontWeight:'bold'},
 			textAlign:'left',
-			color:'#fff'
+			color:'white'
 		});
 		scrollView.add(l2);
 

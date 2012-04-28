@@ -1,10 +1,12 @@
  	App for CloudStack API
- 	version 0.035
+ 	version 0.040
 
  	Current version supports followings,
  	*multi cloud services
 	 Tata,Ninefold and more
- 	*listvirtulmachines and listvolumes 
+ 	*support commands
+ 	 listVirtulMachines,deployVirtualMachines,destroyVirtualmachines
+ 	 listVolumes 
  
  
     Copyright (c) 2012, Shugo Numano(snumano@cpan.org)
