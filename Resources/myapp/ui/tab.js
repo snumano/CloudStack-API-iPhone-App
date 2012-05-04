@@ -5,17 +5,6 @@
 	Titanium.include("volume.js");
 		
 	myapp.tab.beginReloading = function(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, num){
-	Ti.API.info(num);
-	Ti.API.info(apiKey);
-	Ti.API.info(secretKey);
-	//Ti.API.info(apiKey[num]);
-	//Ti.API.info(secretKey[num]);
-	/*
-		if(!apiKey || !secretKey ){
-			alert("Please input API KEY & SECRET KEY.");
-		}
-		else 
-		*/
 		if(!apiKey || !secretKey || !apiKey[num] || !secretKey[num]){
 			for(var cmd in cmdLists){
 				count[cmd] = 'NA';
@@ -24,7 +13,6 @@
 		else{	
 			for(var cmd in cmdLists){			
 				var url = myapp.sub.getUrl(apiUrl,apiKey[num],secretKey[num],cmdLists[cmd],opt);
-				Ti.API.info(url);
   				// オブジェクトを生成します。
   				var xhr = Ti.Network.createHTTPClient();
   				xhr.open('GET', url, false);
@@ -45,12 +33,12 @@
 	    				}
 	    			}
 				};				
-  				xhr.onerror = function(error){
-        			alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
+  				xhr.onerror = function(event){
+       				//alert(event);
        			};
        			
-       			// HTTPリクエストの送信
-  				xhr.send();
+        		// HTTPリクエストの送信
+  	 			xhr.send();
 			}
 			
 		}
@@ -163,56 +151,10 @@
 
 		apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
 		secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
-
-		/*		
-		if(!apiKey || !secretKey ){
-			alert("Please input API KEY & SECRET KEY.");
-		}
-		else if(!apiKey[num] || !secretKey[num]){
-			for(var cmd in cmdLists){
-				count[cmd] = 'NA';
-			}
-		}
-		else{
-			
-			for(var cmd in cmdLists){			
-				var url = myapp.sub.getUrl(apiUrl,apiKey[num],secretKey[num],cmdLists[cmd],opt);
-				Ti.API.info(url);
-  				// オブジェクトを生成します。
-  				var xhr = Ti.Network.createHTTPClient();
-  				xhr.open('GET', url, false);
-
-  				// データダウンロード時のイベント処理
-  				xhr.onload = function() {
-    				var json = JSON.parse(this.responseText);
-    				if(this.responseText.match(/listvirtualmachinesresponse/)){
-	    				count['VM'] = json.listvirtualmachinesresponse.count;
-	    				if(!count['VM']){
-	    					count['VM'] = 0;
-	    				}
-	    			}
-	    			else if(this.responseText.match(/listvolumesresponse/)){
-	    				count['VOLUME'] = json.listvolumesresponse.count;
-	    				if(!count['VOLUME']){
-	    					count['VOLUME'] = 0;
-	    				}
-	    			}
-				};				
-  				xhr.onerror = function(error){
-        			alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
-       			};
-       			
-       			// HTTPリクエストの送信
-  				xhr.send();
-			}
-			
-		}
-		*/
 		
 		data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, num);
 		tableView.data = data;
 			
-
 		tableView.addEventListener('click', function(event){
 			if(Ti.App.Properties.getString('apiKey')){
 				apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
@@ -221,7 +163,6 @@
 				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 			}
 			
-			Ti.API.info(event.rowData.title);
     		if(event.rowData.title.match(/VM/)){
   				if(apiKey[num] && secretKey[num]){
 					var detailWin = myapp.tab.vm.createWin(cloudName,apiUrl,apiKey[num],secretKey[num],opt,tab);
@@ -241,8 +182,8 @@
 				}
 			}
 		});
-       	tableView.addEventListener('scroll',function(e){
-			var offset = e.contentOffset.y;
+       	tableView.addEventListener('scroll',function(event){
+			var offset = event.contentOffset.y;
 			if (offset <= -65.0 && !pulling){
 				var t = Ti.UI.create2DMatrix();
 				t = t.rotate(-180);
@@ -258,8 +199,8 @@
 			}
 		});
 
-		tableView.addEventListener('scrollEnd',function(e){
-			if (pulling && !reloading && e.contentOffset.y <= -65.0){
+		tableView.addEventListener('scrollEnd',function(event){
+			if (pulling && !reloading && event.contentOffset.y <= -65.0){
 				reloading = true;
 				pulling = false;
 				arrow.hide();
@@ -278,8 +219,7 @@
 		
 				tableView.data = data;
 			}
-		});
-       	
+		});  	
   		return tab;
  	};
 })();

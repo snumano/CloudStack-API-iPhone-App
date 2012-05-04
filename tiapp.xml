@@ -7,10 +7,10 @@
         <target device="android">false</target>
         <target device="blackberry">false</target>
     </deployment-targets>
-    <sdk-version>1.8.2</sdk-version>
+    <sdk-version>2.0.1.GA2</sdk-version>
     <id>jp.0t0.0tt.cloudstack</id>
     <name>CloudStack</name>
-    <version>0.040</version>
+    <version>1.2.1</version>
     <publisher>shugo</publisher>
     <url>http://0tt.0t0.jp</url>
     <description>not specified</description>

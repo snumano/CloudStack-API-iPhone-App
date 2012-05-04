@@ -29,8 +29,6 @@
   		xhr.onload = function() {
     		// JSONパース
     		var json = JSON.parse(this.responseText);
-    		Ti.API.info(json);
-
 			var data =[];
     		for (var i=0; i<json.listvolumesresponse.volume.length;i++) {
       			var info = json.listvolumesresponse.volume[i];
@@ -116,8 +114,9 @@
   		// HTTPリクエストの送信
   		xhr.send();
   		
-  		xhr.onerror = function(error){
-        	alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
+  		xhr.onerror = function(event){
+  			alert(event);
+        	//alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
        	};
        
   		return win;

@@ -14,13 +14,13 @@
 		//Step1 & 2
 		cmdArray = cmd.split("&");
 		cmd = encodeURI(cmdArray.sort().join("&").toLowerCase());
-		Ti.API.info(cmd);
+		//Ti.API.info(cmd);
 
 		//Step3
 		var sig = b64_hmac_sha1(secretKey, cmd);
-		Ti.API.info(sig);
+		//Ti.API.info(sig);
 		sig = encodeURIComponent(sig);
-		Ti.API.info(sig);
+		//Ti.API.info(sig);
 
 		var url = apiUrl+"?"+cmdOrig+"&signature="+sig;
 		Ti.API.info(url);

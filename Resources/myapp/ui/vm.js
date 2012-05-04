@@ -24,18 +24,15 @@
   			xhr.onload = function() {
     			// JSONパース
     			json = JSON.parse(this.responseText);
-	    		Ti.API.info(json);
 				
 				var j=0;
     			for (var i=0; i<json.listzonesresponse.zone.length;i++) {
-
-    				if(json.listzonesresponse.zone[i].securitygroupsenabled){
-	    				Ti.API.info(json.listzonesresponse.zone[i]);
+    				if((url.match(/datapipe\.com/) && json.listzonesresponse.zone[i].securitygroupsenabled) || !url.match(/datapipe\.com/)){
+	    				//Ti.API.info(json.listzonesresponse.zone[i]);
 	      				list[j] = i;
 	      				j++;
 	      			}
 				} 
-				Ti.API.info('LIST:' + list);
 				
 				var w1 = Titanium.UI.createWindow({
 					backgroundColor:'black',
@@ -58,9 +55,6 @@
 					top:300
 				});
 				nextBtn.addEventListener('click', function(){
-					Ti.API.info("Next: " + idZone);		
-					Ti.API.info('Template');
-					///////
 					var list = [];
 					var cmd = "listTemplates";
 					var opt2 = opt + "&templatefilter=featured&zoneid=" + idZone;
@@ -77,7 +71,6 @@
     				// JSONパース
 
     					json = JSON.parse(this.responseText);
-	    				Ti.API.info(json);
 						
 						var w2 = Titanium.UI.createWindow({
 							backgroundColor:'black',
@@ -92,9 +85,6 @@
 							top:300
 						});
 						nextBtn.addEventListener('click', function(){
-							Ti.API.info("Next: " + idTemplate);		
-							//////////
-							
 							var list = [];
 							var cmd = "listServiceOfferings";
 							var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
@@ -109,7 +99,6 @@
   							xhr.onload = function() {
     							// JSONパース
     							json = JSON.parse(this.responseText);
-    							Ti.API.info(json);
 						
 								var w3 = Titanium.UI.createWindow({
 									backgroundColor:'black',
@@ -124,9 +113,7 @@
 									top:300
 								});
 								nextBtn.addEventListener('click', function(){
-									Ti.API.info("Next: " + idServiceOffering);	
-									////////////////////
-									
+									var related;
 									var w4 = Ti.UI.createWindow({ 
 										backgroundColor:'black',
 										title:'Confirmation',
@@ -149,7 +136,7 @@
 										font:{fontSize:20, fontWeight:'bold'},
 										textAlign:'center',
 										color:'white',
-										top:70,
+										top:90,
 										height:'auto',
 										width:'auto'
 									});
@@ -160,7 +147,7 @@
 										font:{fontSize:20, fontWeight:'bold'},
 										textAlign:'center',
 										color:'white',
-										top:110,
+										top:150,
 										height:'auto',
 										width:'auto'
 									});
@@ -173,35 +160,35 @@
 										top:300
 									});
 									deployBtn.addEventListener('click', function(){
-										var cmd = "deployVirtualMachine";
-										var opt2 = opt + '&serviceofferingid=' + idServiceOffering + '&templateid=' + idTemplate + '&zoneid=' + idZone;
-										var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt2);
-										var json;
-										
-										// オブジェクトを生成します。
-	  									var xhr = Ti.Network.createHTTPClient();
-  										xhr.open('GET', url, false);
-  										// データダウンロード時のイベント処理
-  										xhr.onload = function() {
-    										// JSONパース
-    										json = JSON.parse(this.responseText);
-    										Ti.API.info(json);
-						
-											alert("Please wait a few minutes.");
-						
-											tab.close(w4);
-											tab.close(w3);
-											tab.close(w2);
-											tab.close(w1);
-    									}
-	  									xhr.onerror = function(e){
-    	    								alert(e);
-       									};		
-	  									xhr.send();	
+										var winArray = [w4,w3,w2,w1];
+										if(apiUrl.match(/tatacommunications\.com/)){
+											var cmd = "listNetworks";
+											var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
+											var json;
+											
+		 									var xhr = Ti.Network.createHTTPClient();
+  											xhr.open('GET', url, false);
+  											// データダウンロード時のイベント処理
+  											xhr.onload = function() {
+    											// JSONパース
+    											json = JSON.parse(this.responseText);
+    											related = String(json.listnetworksresponse.network[0].related);
+  
+  	  											var opt2 = opt + '&serviceofferingid=' + idServiceOffering + '&templateid=' + idTemplate + '&zoneid=' + idZone + '&networkIds=' + related;
+	  											myapp.tab.vm.deployWin(apiUrl,apiKey,secretKey,opt2,tab,winArray);				
+											}
+		  									xhr.onerror = function(event){
+    		    								alert(event);
+       										};		
+	  										xhr.send();	
+										}
+										else{
+											var opt2 = opt + '&serviceofferingid=' + idServiceOffering + '&templateid=' + idTemplate + '&zoneid=' + idZone;
+	  										myapp.tab.vm.deployWin(apiUrl,apiKey,secretKey,opt2,tab,winArray);			
+										}								
 									});
 									w4.add(deployBtn);
-									tab.open(w4);
-									////////////////////
+									tab.open(w4,{animated:true});
 								});
 								w3.add(nextBtn);
 
@@ -218,24 +205,16 @@
 								idServiceOffering = json.listserviceofferingsresponse.serviceoffering[0].id;
 								nameServiceOffering = json.listserviceofferingsresponse.serviceoffering[0].name;
 				
-								picker.addEventListener('change',function(e){
-						  	    	Ti.API.info(json);
-									Ti.API.info("You selected row: " + e.rowIndex );
-
-									idServiceOffering = json.listserviceofferingsresponse.serviceoffering[e.rowIndex].id;
-									nameServiceOffering = json.listserviceofferingsresponse.serviceoffering[e.rowIndex].name;
-									Ti.API.info(json.listserviceofferingsresponse.serviceoffering[e.rowIndex]);
-
-									Ti.API.info(idServiceOffering);
-									Ti.API.info(nameServiceOffering);
+								picker.addEventListener('change',function(event){
+									idServiceOffering = json.listserviceofferingsresponse.serviceoffering[event.rowIndex].id;
+									nameServiceOffering = json.listserviceofferingsresponse.serviceoffering[event.rowIndex].name;
 								});
-								tab.open(w3);
+								tab.open(w3,{animated:true});
     						}
-	  						xhr.onerror = function(e){
-    	    					alert(e);
+	  						xhr.onerror = function(event){
+    	    					alert(event);
        						};		
 	  						xhr.send();			
-							/////////
 						});
 						w2.add(nextBtn);
 
@@ -252,24 +231,16 @@
 						idTemplate = json.listtemplatesresponse.template[0].id;
 						nameTemplate = json.listtemplatesresponse.template[0].name;
 				
-						picker.addEventListener('change',function(e){
-				  	    	Ti.API.info(json);
-							Ti.API.info("You selected row: " + e.rowIndex );
-
-							idTemplate = json.listtemplatesresponse.template[e.rowIndex].id;
-							nameTemplate = json.listtemplatesresponse.template[e.rowIndex].name;
-							Ti.API.info(json.listtemplatesresponse.template[e.rowIndex]);
-
-							Ti.API.info(idTemplate);
-							Ti.API.info(nameTemplate);
+						picker.addEventListener('change',function(event){
+							idTemplate = json.listtemplatesresponse.template[event.rowIndex].id;
+							nameTemplate = json.listtemplatesresponse.template[event.rowIndex].name;
 						});
-						tab.open(w2);
+						tab.open(w2,{animated:true});
     				}
-	  				xhr.onerror = function(e){
-    	    			alert(e);
+	  				xhr.onerror = function(event){
+    	    			alert(event);
        				};		
 	  				xhr.send();
-					///////
 				});
 				w1.add(nextBtn);
 			
@@ -286,22 +257,14 @@
 				idZone = json.listzonesresponse.zone[list[0]].id;
 				nameZone = json.listzonesresponse.zone[list[0]].name;
 				
-				picker.addEventListener('change',function(e){
-			        Ti.API.info(json);
-					Ti.API.info("You selected row: " + e.rowIndex + " list:" + list[e.rowIndex]);
-					Ti.API.info('rowIndex:' + e.rowIndex);
-
-					idZone = json.listzonesresponse.zone[list[e.rowIndex]].id;
-					nameZone = json.listzonesresponse.zone[list[e.rowIndex]].name;
-					Ti.API.info(json.listzonesresponse.zone[list[e.rowIndex]]);
-
-					Ti.API.info(idZone);
-					Ti.API.info(nameZone);
+				picker.addEventListener('change',function(event){
+					idZone = json.listzonesresponse.zone[list[event.rowIndex]].id;
+					nameZone = json.listzonesresponse.zone[list[event.rowIndex]].name;
 				});
-				tab.open(w1);
+				tab.open(w1,{animated:true});
     		}
-	  		xhr.onerror = function(e){
-    	    	alert(e);
+	  		xhr.onerror = function(event){
+    	    	alert(event);
        		};
        		
   			xhr.send();
@@ -323,8 +286,6 @@
   		xhr.onload = function() {
     		// JSONパース
     		var json = JSON.parse(this.responseText);
-    		Ti.API.info(json);
-
 			var data =[];
     		for (var i=0; i<json.listvirtualmachinesresponse.virtualmachine.length;i++) {
       			var info = json.listvirtualmachinesresponse.virtualmachine[i];
@@ -352,20 +313,20 @@
       			
       			var labelId = Ti.UI.createLabel({
         			text:info.id,
-        			font:{fontSize:15,fontWeight:'bold'}, textAlign:'left',
-        			color:'#000',top:0, height:60, left:35, width:55
+        			font:{fontSize:10,fontWeight:'bold'}, textAlign:'left',
+        			color:'#000',top:0, height:60, left:35, width:45
         		});
       			
       			var labelDisplayName = Ti.UI.createLabel({
         			text:info.displayname,
         			font:{fontSize:10,fontWeight:'bold'}, textAlign:'left',
-        			color:'#000',top:0, height:60, left:90, width:100
+        			color:'#000',top:0, height:60, left:85, width:80
       			});
       			// ラベルを生成
       			var labelTemplateName = Ti.UI.createLabel({
         			text:info.templatename,
         			font:{fontSize:10}, textAlign:'left',
-        			color:'#000',top:0, height:60, left:165, width:'auto'
+        			color:'#000',top:0, height:60, left:170, width:'auto'
       			});
       			// Cellのクラス名と高さを定義
       			var row = Ti.UI.createTableViewRow({
@@ -390,8 +351,6 @@
     		win.add(tableView);
        		
 			tableView.addEventListener('delete', function(event){
-				///////////
-				
 				var cmd = "destroyVirtualMachine";
 				var opt2 = opt + '&id=' + Number(json.listvirtualmachinesresponse.virtualmachine[event.index].id);
 				var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt2);
@@ -404,18 +363,15 @@
   				xhr.onload = function() {
     				// JSONパース
     				json2 = JSON.parse(this.responseText);
-    				Ti.API.info(json2);
-
-					alert("VM ID:" + json.listvirtualmachinesresponse.virtualmachine[event.index].id + "has been destroyed.");
+					alert("VM ID:" + json.listvirtualmachinesresponse.virtualmachine[event.index].id + " has been destroyed.");
     			}
-	  			xhr.onerror = function(e){
-    	    		alert(e);
+	  			xhr.onerror = function(event){
+    	    		alert(event);
        			};		
 	  			xhr.send();	
 			});
 				
 		    tableView.addEventListener('click', function(event){
-    			//alert(json.listvirtualmachinesresponse.virtualmachine[event.index].id);
     			var detailLabel = Ti.UI.createLabel({
 					color:'#999',
 					text:"id:" + json.listvirtualmachinesresponse.virtualmachine[event.index].id + "\n" +
@@ -444,17 +400,71 @@
 				});
 		
 				detailWin.add(detailLabel);
-				tab.open(detailWin);
+				tab.open(detailWin,{animated:true});
 			});
   		};
   		// HTTPリクエストの送信
   		xhr.send();
   		
-  		xhr.onerror = function(error){
+  		xhr.onerror = function(event){
         	alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
        	};
   		
   		return win;
+ 	};
+ 	
+ 	myapp.tab.vm.deployWin = function(apiUrl,apiKey,secretKey,opt,tab,winArray){
+ 		var cmd = "deployVirtualMachine";
+		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
+		var json;
+										
+		// オブジェクトを生成します。
+	  	var xhr = Ti.Network.createHTTPClient();
+  		xhr.open('GET', url, false);
+  		// データダウンロード時のイベント処理
+  		xhr.onload = function() {
+    		// JSONパース
+    		json = JSON.parse(this.responseText);
+    		Ti.API.info(json);
+						
+			var w5 = Ti.UI.createWindow({ 
+				backgroundColor:'black',
+				title:'Started to deploy',
+				barColor:'black', 
+			});
+		
+			var label1 = Ti.UI.createLabel({
+				text:'Please wait a few minutes.',
+				font:{fontSize:20, fontWeight:'bold'},
+				textAlign:'center',
+				color:'white',
+				top:30,
+				height:'auto',
+				width:'auto'
+			});
+			w5.add(label1);
+											
+			var okBtn = Titanium.UI.createButton({
+				title:'OK',
+				width:100,
+				height:40,
+				top:300
+			});
+			w5.add(okBtn);
+			tab.open(w5,{animated:true});
+
+			okBtn.addEventListener('click', function(){
+				tab.close(w5);
+				for(var i=0;i<winArray.length;i++){
+					tab.close(winArray[i]);
+				}
+			});
+    	}
+    									
+	  	xhr.onerror = function(event){
+    		alert(event);
+       	};		
+	  	xhr.send();	
  	};
 })();
 

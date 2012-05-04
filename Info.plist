@@ -18,7 +18,6 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>cloudstack</string>
-				
 			</array>
 		</dict>
 	</array>
@@ -33,29 +32,32 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.040</string>
+	<string>1.2.1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1</string>
+	<string>1.2</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-        <key>CFBundleIconFiles</key>
-        <array>
-	<string>appicon.png</string>
-	<string>appicon-72.png</string>
-</array>
-
-        <key>UISupportedInterfaceOrientations~ipad</key>
-        <array>
-	<string>UIInterfaceOrientationPortrait</string>
-	<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	<string>UIInterfaceOrientationLandscapeLeft</string>
-	<string>UIInterfaceOrientationLandscapeRight</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>appicon.png</string>
+		<string>appicon-72.png</string>
 	</array>
-        <key>UISupportedInterfaceOrientations</key>
-        <array>
-	<string>UIInterfaceOrientationPortrait</string>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-        <key>UIStatusBarStyle</key>
-        <string>UIStatusBarStyleDefault</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 </dict>
 </plist>

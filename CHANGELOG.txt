@@ -1,1 +1,12 @@
-Place your change log text here.  This file will be incorporated with your app at package time.
+1.2.1	2012/05/04
+		Optimized error messages when Internet connection occured.
+		Implemented folowing function,
+		-edit original cloud information
+		
+0.040	2012/04/28
+		Implemented following functions,
+		-Deploy VM
+		-Destroy VM
+
+0.03*	2012/04
+		1st release.
