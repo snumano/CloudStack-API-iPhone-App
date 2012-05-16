@@ -4,15 +4,15 @@
 	Titanium.include("vm.js");
 	Titanium.include("volume.js");
 		
-	myapp.tab.beginReloading = function(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, num){
-		if(!apiKey || !secretKey || !apiKey[num] || !secretKey[num]){
+	myapp.tab.beginReloading = function(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName){
+		if(!apiKey || !secretKey || !apiKey[cloudName] || !secretKey[cloudName]){
 			for(var cmd in cmdLists){
 				count[cmd] = 'NA';
 			}
 		}
 		else{	
 			for(var cmd in cmdLists){			
-				var url = myapp.sub.getUrl(apiUrl,apiKey[num],secretKey[num],cmdLists[cmd],opt);
+				var url = myapp.sub.getUrl(apiUrl,apiKey[cloudName],secretKey[cloudName],cmdLists[cmd],opt);
   				// オブジェクトを生成します。
   				var xhr = Ti.Network.createHTTPClient();
   				xhr.open('GET', url, false);
@@ -20,6 +20,7 @@
   				// データダウンロード時のイベント処理
   				xhr.onload = function() {
     				var json = JSON.parse(this.responseText);
+    				//i.API.info(json);
     				if(this.responseText.match(/listvirtualmachinesresponse/)){
 	    				count['VM'] = json.listvirtualmachinesresponse.count;
 	    				if(!count['VM']){
@@ -48,7 +49,7 @@
 	};
 
 	
-	myapp.tab.createTab = function(num,cloudName,flag,apiUrl,opt){
+	myapp.tab.createTab = function(cloudName,flag,apiUrl,opt){
 		var apiKey = new Array(); 
 		var secretKey = new Array();
 		var cmdLists = {
@@ -78,7 +79,7 @@
 				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 			}
 			
-			data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, num);
+			data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
 			tableView.data = data;
 		});
 		
@@ -137,8 +138,9 @@
 		var reloading = false;
 
 		var data = [
-			{title:'VM(' + count['VM'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_network_local.png', height:60},
-			{title:'VOLUME(' + count['VOLUME'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_database.png', height:60}
+			{title:'VM(' + count['VM'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_network_local.png', height:Ti.UI.FILL},
+			{title:'VOLUME(' + count['VOLUME'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_database.png', height:Ti.UI.FILL}
+	
 		];
 		
 		// TableViewの作成
@@ -152,7 +154,7 @@
 		apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
 		secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 		
-		data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, num);
+		data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
 		tableView.data = data;
 			
 		tableView.addEventListener('click', function(event){
@@ -164,8 +166,8 @@
 			}
 			
     		if(event.rowData.title.match(/VM/)){
-  				if(apiKey[num] && secretKey[num]){
-					var detailWin = myapp.tab.vm.createWin(cloudName,apiUrl,apiKey[num],secretKey[num],opt,tab);
+  				if(apiKey[cloudName] && secretKey[cloudName]){
+					var detailWin = myapp.tab.vm.createWin(cloudName,apiUrl,apiKey[cloudName],secretKey[cloudName],opt,tab);
 					tab.open(detailWin);
 				}
 				else{
@@ -173,8 +175,8 @@
 				}
 			}
 			else if(event.rowData.title.match(/VOLUME/)){
-				if(apiKey[num] && secretKey[num]){
-					var detailWin = myapp.tab.volume.createWin(cloudName,apiUrl,apiKey[num],secretKey[num],opt,tab);
+				if(apiKey[cloudName] && secretKey[cloudName]){
+					var detailWin = myapp.tab.volume.createWin(cloudName,apiUrl,apiKey[cloudName],secretKey[cloudName],opt,tab);
 					tab.open(detailWin);
 				}
 				else{
@@ -208,7 +210,7 @@
 				statusLabel.text = "Reloading...";
 				tableView.setContentInsets({top:60},{animated:true});
 				arrow.transform=Ti.UI.create2DMatrix();
-				data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, num);
+				data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
 				//setTimeout(myapp.tab.endReloading(tableView, statusLabel, actInd, arrow),2000);
 			
 				tableView.setContentInsets({top:0},{animated:true});

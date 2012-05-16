@@ -99,7 +99,7 @@
   							xhr.onload = function() {
     							// JSONパース
     							json = JSON.parse(this.responseText);
-						
+								Ti.API.info(json);
 								var w3 = Titanium.UI.createWindow({
 									backgroundColor:'black',
 									title:'Select ServiceOffering',

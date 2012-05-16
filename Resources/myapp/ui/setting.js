@@ -2,10 +2,11 @@
 	myapp.setting = {};
 	
 	myapp.setting.createTab = function(){
-		var i = 0;	
-
-		var apiKey = new Array(); 
-		var secretKey = new Array();
+		//var i = 0;	
+		var cloudName = 'Tata';
+		
+		var apiKey = new Object(); 
+		var secretKey = new Object();
 
 		var infoBtn = Ti.UI.createButton({
 			systemButton:Titanium.UI.iPhone.SystemButton.INFO_LIGHT,
@@ -49,17 +50,19 @@
 
 				if(Ti.App.Properties.getString('addCloud')){
 					addCloud = JSON.parse(Ti.App.Properties.getString('addCloud'));
+					Ti.API.info(addCloud);
 					cloud[countCloud] = addCloud;
 				}		
-				
-				column.removeRow(picker.columns[0].rows[countCloud]);
+				if(picker.columns[0].rows[countCloud]){
+					column.removeRow(picker.columns[0].rows[countCloud]);
+				}
 				column.addRow(Ti.UI.createPickerRow({title:cloud[countCloud][0]}));
 				picker.reloadColumn(column);
 				
 				if(tabadd){
 					tabGroup.removeTab(tabadd);	
 				}
-				tabadd = myapp.tab.createTab(countCloud,cloud[countCloud][0],cloud[countCloud][1],cloud[countCloud][2],opt);
+				tabadd = myapp.tab.createTab(cloud[countCloud][0],cloud[countCloud][1],cloud[countCloud][2],opt);
 				tabGroup.addTab(tabadd);  
 				
 			});		
@@ -67,7 +70,7 @@
 				if(Ti.App.Properties.getString('addCloud')){
 					addCloud = JSON.parse(Ti.App.Properties.getString('addCloud'));
 				}		
-				editTa1.value = addCloud[0];
+				editTf1.value = addCloud[0];
 				editTa2.value = addCloud[2];	
 			});
 
@@ -83,7 +86,8 @@
 			});
 			editScrollView.add(editL1);
 
-			var editTa1 = Ti.UI.createTextArea({
+			var editTf1 = Ti.UI.createTextField({
+//			var editTf1 = Ti.UI.createTextArea({
 				value:'',
 				color:'#888',
 				editable: true,
@@ -102,23 +106,23 @@
 				borderRadius:5,
 				suppressReturn:false
 			});
-			editTa1.addEventListener('return',function(){
-    			editTa1.blur();
+			editTf1.addEventListener('return',function(){
+    			editTf1.blur();
 			});
-			editTa1.addEventListener('blur',function(){
-				if(!editTa1.value){
-					editTa1.value = "";
+			editTf1.addEventListener('blur',function(){
+				if(!editTf1.value){
+					editTf1.value = "";
 				}
 				if(!editTa2.value){
 					editTa2.value = "";
 				}
-				addCloud = [editTa1.value.replace(/\n/g,""),"",editTa2.value.replace(/\n/g,"")];
+				addCloud = [editTf1.value.replace(/\n/g,""),"",editTa2.value.replace(/\n/g,"")];
 				Ti.App.Properties.setString('addCloud', JSON.stringify(addCloud));
 			});
-			editScrollView.add(editTa1);
+			editScrollView.add(editTf1);
 			
 			var editL2 = Ti.UI.createLabel({
-				text:'URL for API',
+				text:'API URL(ex:http://foobar.com/client/api)',
 				top:95,
 				left:10,
 				height:20,
@@ -152,13 +156,13 @@
     			editTa2.blur();
 			});
 			editTa2.addEventListener('blur',function(){
-				if(!editTa1.value){
-					editTa1.value = "";
+				if(!editTf1.value){
+					editTf1.value = "";
 				}
 				if(!editTa2.value){
 					editTa2.value = "";
 				}
-				addCloud = [editTa1.value.replace(/\n/g,""),"",editTa2.value.replace(/\n/g,"")];
+				addCloud = [editTf1.value.replace(/\n/g,""),"",editTa2.value.replace(/\n/g,"")];
 				Ti.App.Properties.setString('addCloud', JSON.stringify(addCloud));
 			});
 			editScrollView.add(editTa2);
@@ -201,8 +205,8 @@
 				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 			}
 			
-			ta1.value = apiKey[i];
-			ta2.value = secretKey[i];	
+			ta1.value = apiKey[cloudName];
+			ta2.value = secretKey[cloudName];	
 		});
 
 		var transformPicker = Ti.UI.create2DMatrix().scale(0.7);
@@ -232,10 +236,14 @@
 			if(Ti.App.Properties.getString('secretKey')){
 				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 			}
+			//Ti.API.info('READ:' + apiKey);
 			
-			i = event.rowIndex;
-			ta1.value = apiKey[i];
-			ta2.value = secretKey[i];
+			//i = event.rowIndex;
+			//Ti.API.info(event.selectedValue[0]);
+			//Ti.API.info(apiKey[event.selectedValue[0]]);
+			cloudName = event.selectedValue[0];
+			ta1.value = apiKey[cloudName];
+			ta2.value = secretKey[cloudName];
 		});
 
 		picker.setSelectedRow(0,1,false);
@@ -276,7 +284,9 @@
     		ta1.blur();
 		});
 		ta1.addEventListener('blur',function(){
-    		apiKey[i] = ta1.value.replace(/\s|\n/g,"");
+    		apiKey[cloudName] = ta1.value.replace(/\s|\n/g,"");
+    		Ti.API.info('cloudName:' + cloudName);
+    		Ti.API.info('apiKey:' + apiKey[cloudName]);
     		Ti.App.Properties.setString('apiKey', JSON.stringify(apiKey));
     		scrollView.scrollTo(0,0);
 		});
@@ -317,7 +327,7 @@
     		ta2.blur();
 		});
 		ta2.addEventListener('blur',function(){
-    		secretKey[i] = ta2.value.replace(/\s|\n/g,"");
+    		secretKey[cloudName] = ta2.value.replace(/\s|\n/g,"");
     		Ti.App.Properties.setString('secretKey', JSON.stringify(secretKey));
     		scrollView.scrollTo(0,0);
 		});		
