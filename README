@@ -1,12 +1,15 @@
  	App for CloudStack API
- 	version 0.040
+ 	version 1.3.0
 
  	Current version supports followings,
  	*multi cloud services
-	 Tata,Ninefold and more
+	 Tata,Ninefold,Datapipe,NTTCom,IDCF,Contegix
+	*You can add your CloudStack.
  	*support commands
  	 listVirtulMachines,deployVirtualMachines,destroyVirtualmachines
  	 listVolumes 
+ 
+ 	If you use previous version(older than 1.3.0),please delete it and re-install latest version.
  
  
     Copyright (c) 2012, Shugo Numano(snumano@cpan.org)

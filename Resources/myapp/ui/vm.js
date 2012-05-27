@@ -2,7 +2,7 @@
 	myapp.tab.vm = {};
 	Titanium.include("../subroutine.js");
 	
-	myapp.tab.vm.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt,tab){
+	myapp.tab.vm.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt){
 		var cmd = "listVirtualMachines";
 		var idZone;
 		var nameZone;
@@ -10,25 +10,20 @@
 		var addBtn = Titanium.UI.createButton({
 			systemButton:Titanium.UI.iPhone.SystemButton.ADD
 		});
-
 		addBtn.addEventListener('click', function(){
 			var list = [];
 			var cmd = "listZones";
 			var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
 			var json;
 			
-			// オブジェクトを生成します。
 	  		var xhr = Ti.Network.createHTTPClient();
   			xhr.open('GET', url, false);
-  			// データダウンロード時のイベント処理
   			xhr.onload = function() {
-    			// JSONパース
     			json = JSON.parse(this.responseText);
 				
 				var j=0;
     			for (var i=0; i<json.listzonesresponse.zone.length;i++) {
     				if((url.match(/datapipe\.com/) && json.listzonesresponse.zone[i].securitygroupsenabled) || !url.match(/datapipe\.com/)){
-	    				//Ti.API.info(json.listzonesresponse.zone[i]);
 	      				list[j] = i;
 	      				j++;
 	      			}
@@ -62,16 +57,11 @@
 					var json;
 					var idTemplate;
 					var nameTemplate;
-			
-					// オブジェクトを生成します。
+					
 	  				var xhr = Ti.Network.createHTTPClient();
   					xhr.open('GET', url, false);
-  					// データダウンロード時のイベント処理
   					xhr.onload = function() {
-    				// JSONパース
-
     					json = JSON.parse(this.responseText);
-						
 						var w2 = Titanium.UI.createWindow({
 							backgroundColor:'black',
 							title:'Select Template',
@@ -92,14 +82,11 @@
 							var idServiceOffering;
 							var nameServiceOffering;
 			
-							// オブジェクトを生成します。
 	  						var xhr = Ti.Network.createHTTPClient();
   							xhr.open('GET', url, false);
-  							// データダウンロード時のイベント処理
   							xhr.onload = function() {
-    							// JSONパース
     							json = JSON.parse(this.responseText);
-								Ti.API.info(json);
+								//Ti.API.info(json);
 								var w3 = Titanium.UI.createWindow({
 									backgroundColor:'black',
 									title:'Select ServiceOffering',
@@ -168,9 +155,7 @@
 											
 		 									var xhr = Ti.Network.createHTTPClient();
   											xhr.open('GET', url, false);
-  											// データダウンロード時のイベント処理
   											xhr.onload = function() {
-    											// JSONパース
     											json = JSON.parse(this.responseText);
     											related = String(json.listnetworksresponse.network[0].related);
   
@@ -188,7 +173,7 @@
 										}								
 									});
 									w4.add(deployBtn);
-									tab.open(w4,{animated:true});
+									tabGroup.activeTab.open(w4,{animated:true});
 								});
 								w3.add(nextBtn);
 
@@ -209,7 +194,7 @@
 									idServiceOffering = json.listserviceofferingsresponse.serviceoffering[event.rowIndex].id;
 									nameServiceOffering = json.listserviceofferingsresponse.serviceoffering[event.rowIndex].name;
 								});
-								tab.open(w3,{animated:true});
+								tabGroup.activeTab.open(w3,{animated:true});
     						}
 	  						xhr.onerror = function(event){
     	    					alert(event);
@@ -235,7 +220,7 @@
 							idTemplate = json.listtemplatesresponse.template[event.rowIndex].id;
 							nameTemplate = json.listtemplatesresponse.template[event.rowIndex].name;
 						});
-						tab.open(w2,{animated:true});
+						tabGroup.activeTab.open(w2,{animated:true});
     				}
 	  				xhr.onerror = function(event){
     	    			alert(event);
@@ -261,7 +246,7 @@
 					idZone = json.listzonesresponse.zone[list[event.rowIndex]].id;
 					nameZone = json.listzonesresponse.zone[list[event.rowIndex]].name;
 				});
-				tab.open(w1,{animated:true});
+				tabGroup.activeTab.open(w1,{animated:true});
     		}
 	  		xhr.onerror = function(event){
     	    	alert(event);
@@ -279,12 +264,9 @@
 		
 		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
 		
-  		// オブジェクトを生成します。
   		var xhr = Ti.Network.createHTTPClient();
   		xhr.open('GET', url);
-  		// データダウンロード時のイベント処理
   		xhr.onload = function() {
-    		// JSONパース
     		var json = JSON.parse(this.responseText);
 			var data =[];
     		for (var i=0; i<json.listvirtualmachinesresponse.virtualmachine.length;i++) {
@@ -303,38 +285,32 @@
  					imgCircle = 'img/circle_yellow.png';
  				}
 
- 
       			var circle = Ti.UI.createImageView({
       				image:imgCircle,
       				left:3,
       				height:30,
       				width:30
-      			});
-      			
+      			});      			
       			var labelId = Ti.UI.createLabel({
         			text:info.id,
         			font:{fontSize:10,fontWeight:'bold'}, textAlign:'left',
         			color:'#000',top:0, height:60, left:35, width:45
         		});
-      			
       			var labelDisplayName = Ti.UI.createLabel({
         			text:info.displayname,
         			font:{fontSize:10,fontWeight:'bold'}, textAlign:'left',
         			color:'#000',top:0, height:60, left:85, width:80
       			});
-      			// ラベルを生成
       			var labelTemplateName = Ti.UI.createLabel({
         			text:info.templatename,
         			font:{fontSize:10}, textAlign:'left',
         			color:'#000',top:0, height:60, left:170, width:'auto'
       			});
-      			// Cellのクラス名と高さを定義
       			var row = Ti.UI.createTableViewRow({
         			className:"NomalCell",
         			height:60
       			});
  
-      			// RowにLabelオブジェクトの追加
  				row.add(circle);
       			row.add(labelId);
       			row.add(labelDisplayName);
@@ -343,7 +319,6 @@
       			data.push(row);
     		}
  
-    		// TableViewの作成
     		var tableView =Ti.UI.createTableView({
       			data:data,
       			editable:true
@@ -356,12 +331,9 @@
 				var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt2);
 				var json2;
 										
-				// オブジェクトを生成します。
 	  			var xhr = Ti.Network.createHTTPClient();
   				xhr.open('GET', url, false);
-  				// データダウンロード時のイベント処理
   				xhr.onload = function() {
-    				// JSONパース
     				json2 = JSON.parse(this.responseText);
 					alert("VM ID:" + json.listvirtualmachinesresponse.virtualmachine[event.index].id + " has been destroyed.");
     			}
@@ -400,16 +372,13 @@
 				});
 		
 				detailWin.add(detailLabel);
-				tab.open(detailWin,{animated:true});
+				tabGroup.activeTab.open(detailWin,{animated:true});
 			});
   		};
-  		// HTTPリクエストの送信
   		xhr.send();
-  		
   		xhr.onerror = function(event){
         	alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
        	};
-  		
   		return win;
  	};
  	
@@ -418,21 +387,17 @@
 		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
 		var json;
 										
-		// オブジェクトを生成します。
 	  	var xhr = Ti.Network.createHTTPClient();
   		xhr.open('GET', url, false);
-  		// データダウンロード時のイベント処理
   		xhr.onload = function() {
-    		// JSONパース
     		json = JSON.parse(this.responseText);
-    		Ti.API.info(json);
+    		//Ti.API.info(json);
 						
 			var w5 = Ti.UI.createWindow({ 
 				backgroundColor:'black',
 				title:'Started to deploy',
 				barColor:'black', 
 			});
-		
 			var label1 = Ti.UI.createLabel({
 				text:'Please wait a few minutes.',
 				font:{fontSize:20, fontWeight:'bold'},
@@ -451,12 +416,12 @@
 				top:300
 			});
 			w5.add(okBtn);
-			tab.open(w5,{animated:true});
+			tabGroup.activeTab.open(w5,{animated:true});
 
 			okBtn.addEventListener('click', function(){
-				tab.close(w5);
+				tabGroup.activeTab.close(w5);
 				for(var i=0;i<winArray.length;i++){
-					tab.close(winArray[i]);
+					tabGroup.activeTab.close(winArray[i]);
 				}
 			});
     	}
@@ -467,4 +432,3 @@
 	  	xhr.send();	
  	};
 })();
-

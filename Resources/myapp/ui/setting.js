@@ -1,9 +1,203 @@
 (function() {
 	myapp.setting = {};
-	
-	myapp.setting.createTab = function(){
-		//var i = 0;	
-		var cloudName = 'Tata';
+	myapp.setting.createTab = function(){	
+		var editBtn = Titanium.UI.createButton({
+			systemButton:Ti.UI.iPhone.SystemButton.EDIT
+		});
+		editBtn.addEventListener('click', function(){
+			win.setLeftNavButton(addBtn);
+			win.setRightNavButton(doneBtn);
+			tableView.editing = true;
+		});
+		var addBtn = Titanium.UI.createButton({
+			systemButton:Ti.UI.iPhone.SystemButton.ADD
+		});
+		addBtn.addEventListener('click', function(){
+			var addCloud = new Array();
+			addCloud = cloudOrig.slice(0);
+			
+			for(var i=addCloud.length-1;i>=0;i--){
+				addCloud[i]['hasChild'] = false;
+				for(var j=0;j<cloud.length;j++){
+					if(addCloud[i]['title'] === cloud[j]['title']){
+						addCloud.splice(i,1);
+						break;
+					}
+				}
+			}
+			addCloud.push({title:"Input New CloudStack", hasDetail:true, height:Ti.UI.FILL});
+			
+			var addTableView = Ti.UI.createTableView({
+				hasEditing:true,
+				hasEditable:true,
+				data:addCloud
+			});
+			addTableView.addEventListener('click', function(e){
+				if(e.index === addCloud.length-1){	
+					var newScrollView = Titanium.UI.createScrollView({
+    					contentWidth:'auto',
+    					contentHeight:'auto',
+    					top:0,
+    					showVerticalScrollIndicator:true
+					});
+					var newWin = Ti.UI.createWindow({ 
+						barColor:'black', 
+    					title:'New CloudStack',
+					});
+					newWin.addEventListener('close', function(){
+						addCloud.splice(addCloud.length-1, 0, newCloud);
+						addTableView.setData(addCloud);
+					});		
+
+					var newL1 = Ti.UI.createLabel({
+						text:'Name',
+						top:30,
+						left:10,
+						height:20,
+						width:300,
+						font:{fontSize:15, fontWeight:'bold'},
+						textAlign:'left',
+						color:'white'
+					});
+					newScrollView.add(newL1);
+
+					var newTf1 = Ti.UI.createTextField({
+						value:'',
+						color:'#888',
+						editable: true,
+						top:55,
+						left:10,
+						height:30,
+						width:300,
+						font:{fontSize:15, fontWeight:'bold'},
+						textAlign:'left',
+						autocapitalization:Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
+						keyboardType:Ti.UI.KEYBOARD_DEFAULT,
+						returnKeyType:Ti.UI.RETURNKEY_DONE,
+						borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+						borderWidth:2,
+						borderColor:'#bbb',
+						borderRadius:5,
+						suppressReturn:false
+					});
+					newTf1.addEventListener('return',function(){
+    					newTf1.blur();
+					});
+					newTf1.addEventListener('blur',function(){
+						if(!newTf1.value){
+							newTf1.value = "";
+						}
+						if(!newTa2.value){
+							newTa2.value = "";
+						}
+						newCloud = {title:newTf1.value.replace(/\n/g,""), img:"", url:newTa2.value.replace(/\n/g,""), height:Ti.UI.FILL};
+					});
+					newScrollView.add(newTf1);
+			
+					var newL2 = Ti.UI.createLabel({
+						text:'API URL(ex:http://foobar.com/client/api)',
+						top:95,
+						left:10,
+						height:20,
+						width:300,
+						font:{fontSize:15, fontWeight:'bold'},
+						textAlign:'left',
+						color:'white'
+					});
+					newScrollView.add(newL2);
+
+					var newTa2 = Ti.UI.createTextArea({
+						value:'',
+						color:'#888',
+						editable: true,
+						top:120,
+						left:10,
+						height:90,
+						width:300,
+						font:{fontSize:15, fontWeight:'bold'},
+						textAlign:'left',
+						autocapitalization:Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
+						keyboardType:Ti.UI.KEYBOARD_DEFAULT,
+						returnKeyType:Ti.UI.RETURNKEY_DONE,
+						borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+						borderWidth:2,
+						borderColor:'#bbb',
+						borderRadius:5,
+						suppressReturn:false
+					});
+					newTa2.addEventListener('return',function(){
+    					newTa2.blur();
+					});
+					newTa2.addEventListener('blur',function(){
+						if(!newTf1.value){
+							newTf1.value = "";
+						}
+						if(!newTa2.value){
+							newTa2.value = "";
+						}
+						newCloud = {title:newTf1.value.replace(/\n/g,""), img:"", url:newTa2.value.replace(/\n/g,""), height:Ti.UI.FILL};
+					});
+					newScrollView.add(newTa2);
+					newWin.add(newScrollView);
+					tabGroup.activeTab.open(newWin,{animated:true});
+				}
+				else{
+					if(addCloud[e.index]['hasCheck']){
+						addCloud[e.index]['hasCheck'] = false;
+					}
+					else{
+						addCloud[e.index]['hasCheck'] = true;
+					}
+					//Ti.API.info(addCloud);			
+					addTableView.setData(addCloud);
+				}
+			});
+			
+			var win = Ti.UI.createWindow({
+				barColor:'black', 
+    			title:'Add Cloud'
+			});
+			win.add(addTableView);
+			tabGroup.activeTab.open(win);
+
+			win.addEventListener('close', function(e){
+				//Ti.API.info(cloud);
+				for(var i=0;i<addCloud.length;i++){
+					if(addCloud[i]['hasCheck']){
+						addCloud[i]['hasCheck'] = false;
+						addCloud[i]['hasChild'] = true;
+						//Ti.API.info(addCloud[i]);
+						cloud.push(addCloud[i]);
+						//Ti.API.info(cloud);
+					}
+				}
+				//Ti.API.info(cloud);
+				tableView.setData(cloud);
+			});
+
+		});
+
+		var doneBtn = Titanium.UI.createButton({
+			systemButton:Ti.UI.iPhone.SystemButton.DONE
+		});
+		doneBtn.addEventListener('click', function(){
+			win.setLeftNavButton(infoBtn);
+			win.setRightNavButton(editBtn);
+			tableView.editing = false;
+			//Ti.API.info(cloud);
+			Ti.App.Properties.setString('cloud', JSON.stringify(cloud));
+			viewArray = new Array();
+			for(var i=0;i<cloud.length;i++){
+				cloud[i]['hasChild'] = true;
+				viewArray[i] = myapp.view.createView(cloud[i]['title'],cloud[i]['img'],cloud[i]['url'],opt);			
+			}
+			tableView.setData(cloud);
+			
+			activeView = viewArray[0];
+			scrollView.setViews(viewArray);
+			cloudWin.remove(scrollView);
+			cloudWin.add(scrollView);
+		});
 		
 		var apiKey = new Object(); 
 		var secretKey = new Object();
@@ -23,121 +217,73 @@
 				backgroundColor:'black',
 			});
 			win.add(webView);
-			tab.open(win,{animated:true});
+			tabGroup.activeTab.open(win,{animated:true});
 			
 		});
 		
-		var editBtn = Titanium.UI.createButton({
-			systemButton:Titanium.UI.iPhone.SystemButton.EDIT
+		var tableView = Ti.UI.createTableView({
+			data:cloud,
+			moveable:true
 		});
-		editBtn.addEventListener('click', function(){
-			var addCloud = new Array();
+		
+		var win = Ti.UI.createWindow({  
+    		title:'Setting',
+    		barColor:'black',
+    		leftNavButton:infoBtn,
+    		rightNavButton:editBtn
+		});
+		
+		var tab = Ti.UI.createTab({  
+			title:'Setting',
+    		icon:'img/light_wrench.png',
+    		window:win
+		});
+		tableView.addEventListener('move',function(e){
+			Titanium.API.info("move - row="+e.row+", index="+e.index+", section="+e.section+", from = "+e.fromIndex);
+			var tmp = cloud[e.index];
+			cloud[e.index] = cloud[e.fromIndex];
+			cloud[e.fromIndex] = tmp;
+			//Ti.API.info(cloud);
+		});
+		tableView.addEventListener('delete',function(e){
+			Titanium.API.info("move - row="+e.row+", index="+e.index+", section="+e.section+", from = "+e.fromIndex);
+			cloud.splice(e.index,1);
+			//Ti.API.info(cloud);
+		});
+		tableView.addEventListener('click', function(event){			
+			//Ti.API.info('index:' + event.index);
+			cloudName = cloud[event.index]['title'];
 			
-			var editScrollView = Titanium.UI.createScrollView({
+			var scrollView = Titanium.UI.createScrollView({
     			contentWidth:'auto',
     			contentHeight:'auto',
     			top:0,
     			showVerticalScrollIndicator:true
 			});
 		
-			var editWin = Ti.UI.createWindow({ 
-				barColor:'black', 
-    			title:'Add Cloud Provider',
+			var detailWin = Ti.UI.createWindow({
+				title: cloudName,
+				backgroundColor: 'black',
+				barColor:'black'
 			});
-			editWin.addEventListener('close', function(){
-				Ti.App.Properties.setString('addCloud',JSON.stringify(addCloud));
-				//Ti.API.info('close edit');
-
-				if(Ti.App.Properties.getString('addCloud')){
-					addCloud = JSON.parse(Ti.App.Properties.getString('addCloud'));
-					Ti.API.info(addCloud);
-					cloud[countCloud] = addCloud;
-				}		
-				if(picker.columns[0].rows[countCloud]){
-					column.removeRow(picker.columns[0].rows[countCloud]);
-				}
-				column.addRow(Ti.UI.createPickerRow({title:cloud[countCloud][0]}));
-				picker.reloadColumn(column);
-				
-				if(tabadd){
-					tabGroup.removeTab(tabadd);	
-				}
-				tabadd = myapp.tab.createTab(cloud[countCloud][0],cloud[countCloud][1],cloud[countCloud][2],opt);
-				tabGroup.addTab(tabadd);  
-				
-			});		
-			editWin.addEventListener('open', function(){		
-				if(Ti.App.Properties.getString('addCloud')){
-					addCloud = JSON.parse(Ti.App.Properties.getString('addCloud'));
-				}		
-				editTf1.value = addCloud[0];
-				editTa2.value = addCloud[2];	
+		
+			var l1 = Ti.UI.createLabel({
+				text:'API KEY',
+				top:10,
+				left:10,
+				height:20,
+				width:300,
+				font:{fontSize:15, fontWeight:'bold'},
+				textAlign:'left',
+				color:'white'
 			});
+			scrollView.add(l1);
 
-			var editL1 = Ti.UI.createLabel({
-				text:'Name',
+			var ta1 = Ti.UI.createTextArea({
+				value:'',
+				color:'#888',
+				editable: true,
 				top:30,
-				left:10,
-				height:20,
-				width:300,
-				font:{fontSize:15, fontWeight:'bold'},
-				textAlign:'left',
-				color:'white'
-			});
-			editScrollView.add(editL1);
-
-			var editTf1 = Ti.UI.createTextField({
-//			var editTf1 = Ti.UI.createTextArea({
-				value:'',
-				color:'#888',
-				editable: true,
-				top:55,
-				left:10,
-				height:30,
-				width:300,
-				font:{fontSize:15, fontWeight:'bold'},
-				textAlign:'left',
-				autocapitalization:Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
-				keyboardType:Ti.UI.KEYBOARD_DEFAULT,
-				returnKeyType:Ti.UI.RETURNKEY_DONE,
-				borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
-				borderWidth:2,
-				borderColor:'#bbb',
-				borderRadius:5,
-				suppressReturn:false
-			});
-			editTf1.addEventListener('return',function(){
-    			editTf1.blur();
-			});
-			editTf1.addEventListener('blur',function(){
-				if(!editTf1.value){
-					editTf1.value = "";
-				}
-				if(!editTa2.value){
-					editTa2.value = "";
-				}
-				addCloud = [editTf1.value.replace(/\n/g,""),"",editTa2.value.replace(/\n/g,"")];
-				Ti.App.Properties.setString('addCloud', JSON.stringify(addCloud));
-			});
-			editScrollView.add(editTf1);
-			
-			var editL2 = Ti.UI.createLabel({
-				text:'API URL(ex:http://foobar.com/client/api)',
-				top:95,
-				left:10,
-				height:20,
-				width:300,
-				font:{fontSize:15, fontWeight:'bold'},
-				textAlign:'left',
-				color:'white'
-			});
-			editScrollView.add(editL2);
-
-			var editTa2 = Ti.UI.createTextArea({
-				value:'',
-				color:'#888',
-				editable: true,
-				top:120,
 				left:10,
 				height:90,
 				width:300,
@@ -152,51 +298,72 @@
 				borderRadius:5,
 				suppressReturn:false
 			});
-			editTa2.addEventListener('return',function(){
-    			editTa2.blur();
-			});
-			editTa2.addEventListener('blur',function(){
-				if(!editTf1.value){
-					editTf1.value = "";
-				}
-				if(!editTa2.value){
-					editTa2.value = "";
-				}
-				addCloud = [editTf1.value.replace(/\n/g,""),"",editTa2.value.replace(/\n/g,"")];
-				Ti.App.Properties.setString('addCloud', JSON.stringify(addCloud));
-			});
-			editScrollView.add(editTa2);
-			
-			editWin.add(editScrollView);
-			tab.open(editWin,{animated:true});
-			
-		});
-				
-		var scrollView = Titanium.UI.createScrollView({
-    		contentWidth:'auto',
-    		contentHeight:'auto',
-    		top:0,
-    		showVerticalScrollIndicator:true
-		});
 		
-		var win = Ti.UI.createWindow({  
-    		title:'Setting',
-    		barColor:'black',
-    		rightNavButton:infoBtn,
-    		leftNavButton:editBtn
-		});
+			ta1.addEventListener('return',function(){
+    			ta1.blur();
+			});
+			ta1.addEventListener('blur',function(){
+    			apiKey[cloudName] = ta1.value.replace(/\s|\n/g,"");
+   	 			//Ti.API.info('cloudName:' + cloudName);
+    			//Ti.API.info('apiKey:' + apiKey[cloudName]);
+    			Ti.App.Properties.setString('apiKey', JSON.stringify(apiKey));
+			});
+			scrollView.add(ta1);
 		
-		var tab = Ti.UI.createTab({  
-			title:'Setting',
-    		icon:'img/light_wrench.png',
-    		window:win
+			var l2 = Ti.UI.createLabel({
+				text:'SECRET KEY',
+				top:130,
+				left:10,
+				height:20,
+				width:300,
+				font:{fontSize:15, fontWeight:'bold'},
+				textAlign:'left',
+				color:'white'
+			});
+			scrollView.add(l2);
+
+			var ta2 = Ti.UI.createTextArea({
+				value:'',
+				color:'#888',
+				editable: true,
+				top:150,
+				left:10,
+				height:90,
+				width:300,
+				font:{fontSize:15, fontWeight:'bold'},
+				textAlign:'left',
+				autocapitalization:Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
+				keyboardType:Ti.UI.KEYBOARD_DEFAULT,
+				returnKeyType:Ti.UI.RETURNKEY_DONE,
+				borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+				borderWidth:2,
+				borderColor:'#bbb',
+				borderRadius:5,
+				suppressReturn:false
+			});
+			ta2.addEventListener('return',function(){
+    			ta2.blur();
+			});
+			ta2.addEventListener('blur',function(){
+    			secretKey[cloudName] = ta2.value.replace(/\s|\n/g,"");
+    			//Ti.API.info('cloudName:' + cloudName);
+    			//Ti.API.info('secretKey:' + secretKey[cloudName]);
+	    		Ti.App.Properties.setString('secretKey', JSON.stringify(secretKey));
+			});		
+			scrollView.add(ta2);
+
+			ta1.value = apiKey[cloudName];
+			ta2.value = secretKey[cloudName];
+			
+    		detailWin.add(scrollView);
+			tabGroup.activeTab.open(detailWin,{animated:true});
 		});
 
 		win.addEventListener('close', function(){
 			Ti.App.Properties.setString('apiKey',JSON.stringify(apiKey));
 			Ti.App.Properties.setString('secretKey',JSON.stringify(secretKey));
 		});
-		
+
 		win.addEventListener('open', function(){					
 			if(Ti.App.Properties.getString('apiKey')){
 				apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
@@ -204,136 +371,9 @@
 			if(Ti.App.Properties.getString('secretKey')){
 				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 			}
-			
-			ta1.value = apiKey[cloudName];
-			ta2.value = secretKey[cloudName];	
-		});
-
-		var transformPicker = Ti.UI.create2DMatrix().scale(0.7);
-		var picker = Ti.UI.createPicker({
-			top:-30,
-			transform:transformPicker
 		});
 		
-		if(Ti.App.Properties.getString('addCloud')){
-			addCloud = JSON.parse(Ti.App.Properties.getString('addCloud'));
-			cloud[countCloud] = addCloud;
-		}		
-		picker.selectionIndicator = true;
-		var column = Ti.UI.createPickerColumn();
-		for(var i=0;i<cloud.length;i++){
-			column.addRow(Ti.UI.createPickerRow({title:cloud[i][0]}));
-		}
-		picker.add(column);
-		
-		scrollView.add(picker);
-		picker.setSelectedRow(0,1,true);
-			
-		picker.addEventListener('change',function(event){
-			if(Ti.App.Properties.getString('apiKey')){
-				apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
-			}
-			if(Ti.App.Properties.getString('secretKey')){
-				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
-			}
-			//Ti.API.info('READ:' + apiKey);
-			
-			//i = event.rowIndex;
-			//Ti.API.info(event.selectedValue[0]);
-			//Ti.API.info(apiKey[event.selectedValue[0]]);
-			cloudName = event.selectedValue[0];
-			ta1.value = apiKey[cloudName];
-			ta2.value = secretKey[cloudName];
-		});
-
-		picker.setSelectedRow(0,1,false);
-		
-		var l1 = Ti.UI.createLabel({
-			text:'API KEY',
-			top:180,
-			left:10,
-			height:20,
-			width:300,
-			font:{fontSize:15, fontWeight:'bold'},
-			textAlign:'left',
-			color:'white'
-		});
-		scrollView.add(l1);
-
-		var ta1 = Ti.UI.createTextArea({
-			value:'',
-			color:'#888',
-			editable: true,
-			top:200,
-			left:10,
-			height:90,
-			width:300,
-			font:{fontSize:15, fontWeight:'bold'},
-			textAlign:'left',
-			autocapitalization:Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
-			keyboardType:Ti.UI.KEYBOARD_DEFAULT,
-			returnKeyType:Ti.UI.RETURNKEY_DONE,
-			borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
-			borderWidth:2,
-			borderColor:'#bbb',
-			borderRadius:5,
-			suppressReturn:false
-		});
-		
-		ta1.addEventListener('return',function(){
-    		ta1.blur();
-		});
-		ta1.addEventListener('blur',function(){
-    		apiKey[cloudName] = ta1.value.replace(/\s|\n/g,"");
-    		Ti.API.info('cloudName:' + cloudName);
-    		Ti.API.info('apiKey:' + apiKey[cloudName]);
-    		Ti.App.Properties.setString('apiKey', JSON.stringify(apiKey));
-    		scrollView.scrollTo(0,0);
-		});
-		scrollView.add(ta1);
-		
-		var l2 = Ti.UI.createLabel({
-			text:'SECRET KEY',
-			top:300,
-			left:10,
-			height:20,
-			width:300,
-			font:{fontSize:15, fontWeight:'bold'},
-			textAlign:'left',
-			color:'white'
-		});
-		scrollView.add(l2);
-
-		var ta2 = Ti.UI.createTextArea({
-			value:'',
-			color:'#888',
-			editable: true,
-			top:320,
-			left:10,
-			height:90,
-			width:300,
-			font:{fontSize:15, fontWeight:'bold'},
-			textAlign:'left',
-			autocapitalization:Ti.UI.TEXT_AUTOCAPITALIZATION_NONE,
-			keyboardType:Ti.UI.KEYBOARD_DEFAULT,
-			returnKeyType:Ti.UI.RETURNKEY_DONE,
-			borderStyle:Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
-			borderWidth:2,
-			borderColor:'#bbb',
-			borderRadius:5,
-			suppressReturn:false
-		});
-		ta2.addEventListener('return',function(){
-    		ta2.blur();
-		});
-		ta2.addEventListener('blur',function(){
-    		secretKey[cloudName] = ta2.value.replace(/\s|\n/g,"");
-    		Ti.App.Properties.setString('secretKey', JSON.stringify(secretKey));
-    		scrollView.scrollTo(0,0);
-		});		
-		scrollView.add(ta2);
-
-		win.add(scrollView);
+		win.add(tableView);
 		return tab;	
 	};
 })();

@@ -1,51 +1,83 @@
 var myapp = {};
+
 Titanium.include("lib/sha1.js");
 Titanium.include("myapp/ui/tab.js");
+Titanium.include("myapp/ui/view.js");
 Titanium.include("myapp/ui/setting.js");
 
-var cloud = [
-	["Tata","img/in.png","http://manage.iaas.tatacommunications.com:8080/client/api"],
-	["NineFold","img/au.png","https://api.ninefold.com/compute/v1.0/"],
-	["Datapipe","img/us.png","https://cloud.datapipe.com/api/compute/v1"],
-	["NTTCom","img/jp.png","https://mycloud2.securesites.com/client/api"],
-	["IDCF","img/jp.png","https://api.noahcloud.jp/portal/client/api"],
-	["Contegix","img/us.png","https://cloud.contegix.com/portal/client/api"]
+var cloudOrig = [
+		{title:"Tata", img:"img/in.png", url:"http://manage.iaas.tatacommunications.com:8080/client/api", hasChild:true, height:Ti.UI.FILL},
+		{title:"NineFold", img:"img/au.png", url:"https://api.ninefold.com/compute/v1.0/", hasChild:true, height:Ti.UI.FILL},
+		{title:"Datapipe", img:"img/us.png", url:"https://cloud.datapipe.com/api/compute/v1", hasChild:true, height:Ti.UI.FILL},
+		{title:"NTTCom", img:"img/jp.png", url:"https://mycloud2.securesites.com/client/api", hasChild:true, height:Ti.UI.FILL},
+		{title:"IDCF", img:"img/jp.png", url:"https://api.noahcloud.jp/portal/client/api", hasChild:true, height:Ti.UI.FILL},
+		{title:"Contegix", img:"img/us.png", url:"https://cloud.contegix.com/portal/client/api", hasChild:true, height:Ti.UI.FILL}
 ];
-var countCloud = cloud.length;
+	
+var cloud = new Array();
+if(Ti.App.Properties.getString('cloud')){
+	cloud = JSON.parse(Ti.App.Properties.getString('cloud'));
+}
+else{
+	cloud = cloudOrig.slice(0);
+}
+
+var cloudLen = cloud.length;
 var opt = "response=json";
 
 Ti.UI.setBackgroundColor('#000');
 
-// create tab group
 var tabGroup = Ti.UI.createTabGroup();
 var tabSetting = myapp.setting.createTab();
 
-var tab0 = myapp.tab.createTab(cloud[0][0],cloud[0][1],cloud[0][2],opt);
-var tab1 = myapp.tab.createTab(cloud[1][0],cloud[1][1],cloud[1][2],opt);
-var tab2 = myapp.tab.createTab(cloud[2][0],cloud[2][1],cloud[2][2],opt);
-var tab3 = myapp.tab.createTab(cloud[3][0],cloud[3][1],cloud[3][2],opt);
-var tab4 = myapp.tab.createTab(cloud[4][0],cloud[4][1],cloud[4][2],opt);
-var tab5 = myapp.tab.createTab(cloud[5][0],cloud[5][1],cloud[5][2],opt);
-var tabadd;
+var viewArray = new Array();
+var btn = new Array();
+for(var i=0;i<cloud.length;i++){
+	viewArray[i] = myapp.view.createView(cloud[i]['title'],cloud[i]['img'],cloud[i]['url'],opt);
+}
 
-tabGroup.addTab(tab0);  
-tabGroup.addTab(tab1);  
-tabGroup.addTab(tab2);
+var i=0;		
+var cloudWin = Ti.UI.createWindow({
+	backgroundColor:'black',
+	barColor:'black',
+	title:cloud[i]['title'],
+	rightNavButton:Ti.UI.createButton({backgroundImage:cloud[i]['img'], height:22, width:32})
+});
+
+var scrollView = Titanium.UI.createScrollableView({
+    views:viewArray,
+    showPagingControl:true,
+    pagingControlHeight:30,
+    pagingControlColor: 'black',
+    maxZoomScale:0,
+    currentPage:0
+});
+
+var activeView = viewArray[0];
+scrollView.addEventListener('scroll', function(e){
+	activeView = e.view;  
+	i = e.currentPage;
+	if(i >= 0){
+		cloudWin.setTitle(cloud[i]['title']);
+		cloudWin.setRightNavButton(Ti.UI.createButton({backgroundImage:cloud[i]['img'], height:22, width:32}));
+	}
+});
+cloudWin.add(scrollView);
+
+var tabCloud = Ti.UI.createTab({
+	title:'Cloud',
+	icon:'img/light_globe.png',
+	window:cloudWin
+});
+
+tabGroup.addTab(tabCloud);
 tabGroup.addTab(tabSetting); 
-tabGroup.addTab(tab3);
-tabGroup.addTab(tab4);
-tabGroup.addTab(tab5);
 
 if(Ti.App.Properties.getString('addCloud')){
 	addCloud = JSON.parse(Ti.App.Properties.getString('addCloud'));
-	cloud[countCloud] = addCloud;
-	tabadd = myapp.tab.createTab(cloud[countCloud][0],cloud[countCloud][1],cloud[countCloud][2],opt);
-		
-	if(tabadd){
-		tabGroup.removeTab(tabadd);	
-	}
-	
-	tabGroup.addTab(tabadd);  
+	cloud[cloudLen] = addCloud;
+	viewadd = myapp.view.createView(cloud[cloudLen]['title'],cloud[cloudLen]['img'],cloud[cloudLen]['url'],opt);
+	scrollView.addView(viewadd);
 }
 
 tabGroup.open();

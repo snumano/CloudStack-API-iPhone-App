@@ -2,7 +2,7 @@
 	myapp.tab.volume = {};
 	Titanium.include("../subroutine.js");
 		
-	myapp.tab.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt,tab){
+	myapp.tab.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt){
 		var cmd = "listVolumes";
 		
 		var addBtn = Titanium.UI.createButton({
@@ -21,31 +21,24 @@
 		});
 
 		var url = myapp.sub.getUrl(apiUrl,apiKey,secretKey,cmd,opt);
-
-  		// オブジェクトを生成します。
   		var xhr = Ti.Network.createHTTPClient();
   		xhr.open('GET', url);
-  		// データダウンロード時のイベント処理
   		xhr.onload = function() {
-    		// JSONパース
     		var json = JSON.parse(this.responseText);
 			var data =[];
     		for (var i=0; i<json.listvolumesresponse.volume.length;i++) {
       			var info = json.listvolumesresponse.volume[i];
  
-      			// ここからCellを生成する
       			var labelId = Ti.UI.createLabel({
         			text:info.id,
         			font:{fontSize:15,fontWeight:'bold'}, textAlign:'left',
         			color:'#000',top:0, height:60, left:3, width:45
         		});
-      			// ラベルを生成
       			var labelName = Ti.UI.createLabel({
         			text:info.name,
         			font:{fontSize:15,fontWeight:'bold'}, textAlign:'left',
         			color:'#000',top:0, height:60, left:50, width:100
       			});
-      			// ラベルを生成
       			var labelState = Ti.UI.createLabel({
         			text:info.state,
         			font:{fontSize:10}, textAlign:'left',
@@ -56,13 +49,11 @@
         			font:{fontSize:10}, textAlign:'left',
         			color:'#000',top:0, height:60, left:210, width:'auto'
       			});
-      			// Cellのクラス名と高さを定義
       			var row = Ti.UI.createTableViewRow({
         			className:"NomalCell",
         			height:60
       			});
  
-      			// RowにLabelオブジェクトの追加
       			row.add(labelId);
       			row.add(labelName);
       			row.add(labelState);
@@ -70,8 +61,7 @@
       			row.setHasChild(true);
       			data.push(row);
     		}
- 
-    		// TableViewの作成
+
     		var tableView =Ti.UI.createTableView({
       			data:data,
       			editable:true
@@ -108,18 +98,14 @@
 				});
 		
 				detailWin.add(detailLabel);
-				tab.open(detailWin);
+				tabGroup.activeTab.open(detailWin);
 			});
   		};
-  		// HTTPリクエストの送信
   		xhr.send();
-  		
   		xhr.onerror = function(event){
   			alert(event);
-        	//alert("No Internet connection.Please make sure that you have Internet connectivity and try again later.");
        	};
        
   		return win;
  	};
 })();
-

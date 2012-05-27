@@ -1,26 +1,23 @@
 (function() {
-	myapp.tab = {};
+	myapp.view = {};
 	Titanium.include("../subroutine.js");
 	Titanium.include("vm.js");
 	Titanium.include("volume.js");
 		
-	myapp.tab.beginReloading = function(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName){
+	myapp.view.beginReloading = function(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName){
 		if(!apiKey || !secretKey || !apiKey[cloudName] || !secretKey[cloudName]){
 			for(var cmd in cmdLists){
 				count[cmd] = 'NA';
 			}
 		}
 		else{	
-			for(var cmd in cmdLists){			
+			for(var cmd in cmdLists){		
 				var url = myapp.sub.getUrl(apiUrl,apiKey[cloudName],secretKey[cloudName],cmdLists[cmd],opt);
-  				// オブジェクトを生成します。
+ 
   				var xhr = Ti.Network.createHTTPClient();
   				xhr.open('GET', url, false);
-
-  				// データダウンロード時のイベント処理
   				xhr.onload = function() {
     				var json = JSON.parse(this.responseText);
-    				//i.API.info(json);
     				if(this.responseText.match(/listvirtualmachinesresponse/)){
 	    				count['VM'] = json.listvirtualmachinesresponse.count;
 	    				if(!count['VM']){
@@ -37,17 +34,18 @@
   				xhr.onerror = function(event){
        				//alert(event);
        			};
-       			
-        		// HTTPリクエストの送信
   	 			xhr.send();
 			}
 			
 		}
-		data[0].title = 'VM(' + count['VM'] +')';
-		data[1].title = 'VOLUME(' + count['VOLUME'] +')';
+		data[0]['title'] = 'VM(' + count['VM'] +')';
+		data[1]['title'] = 'VOLUME(' + count['VOLUME'] +')';
 		return data;
 	};
-	myapp.tab.createTab = function(cloudName,flag,apiUrl,opt){
+
+	
+	myapp.view.createView = function(cloudName,flag,apiUrl,opt){
+
 		var apiKey = new Array(); 
 		var secretKey = new Array();
 		var cmdLists = {
@@ -55,44 +53,28 @@
 			'VOLUME':'listVolumes'
 			};
 		var count = new Object();
-	
-		var btn = Ti.UI.createButton({
-			backgroundImage:flag,
-			height:22,
-			width:32
-		});
+		var data = [
+			{title:'VM(' + count['VM'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_network_local.png', height:Ti.UI.FILL},
+			{title:'VOLUME(' + count['VOLUME'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_database.png', height:Ti.UI.FILL}
+		];	
 		
-		var win = Ti.UI.createWindow({  
-    		title:cloudName,
-    		backgroundColor:'white',
-    		barColor:'black',
-       		rightNavButton:btn
-		});
-
-		win.addEventListener('open', function(){
+		tabGroup.addEventListener('open', function(){	
 			if(Ti.App.Properties.getString('apiKey')){
 				apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
 			}
 			if(Ti.App.Properties.getString('secretKey')){
 				secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
 			}
-			
-			data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
+			data = myapp.view.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
 			tableView.data = data;
 		});
 		
-		var tab = Ti.UI.createTab({  
-    		icon:'img/light_globe.png',
-    		title:cloudName,
-    		window:win
-		});
-		
+		var view = Ti.UI.createView();
 		var border = Ti.UI.createView({
 			backgroundColor:"#576c89",
 			height:2,
 			bottom:0
 		});
-
 		var tableHeader = Ti.UI.createView({
 			backgroundColor:"#e2e7ed",
 			width:320,
@@ -135,24 +117,16 @@
 		var pulling = false;
 		var reloading = false;
 
-		var data = [
-			{title:'VM(' + count['VM'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_network_local.png', height:Ti.UI.FILL},
-			{title:'VOLUME(' + count['VOLUME'] +')', hasChild:true, leftImage:'img/Crystal_Clear_app_database.png', height:Ti.UI.FILL}
-	
-		];
-		
-		// TableViewの作成
     	var tableView =Ti.UI.createTableView({
       		data:data
     	});
-
+	
 		tableView.headerPullView = tableHeader;			
-    	win.add(tableView);
-
+		view.add(tableView);
+		
 		apiKey = JSON.parse(Ti.App.Properties.getString('apiKey'));
 		secretKey = JSON.parse(Ti.App.Properties.getString('secretKey'));
-		
-		data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
+		data = myapp.view.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
 		tableView.data = data;
 			
 		tableView.addEventListener('click', function(event){
@@ -165,8 +139,8 @@
 			
     		if(event.rowData.title.match(/VM/)){
   				if(apiKey[cloudName] && secretKey[cloudName]){
-					var detailWin = myapp.tab.vm.createWin(cloudName,apiUrl,apiKey[cloudName],secretKey[cloudName],opt,tab);
-					tab.open(detailWin);
+					var detailWin = myapp.tab.vm.createWin(cloudName,apiUrl,apiKey[cloudName],secretKey[cloudName],opt);
+					tabGroup.activeTab.open(detailWin,{animated:true});
 				}
 				else{
 					alert("Please input API KEY & SECRET KEY.");
@@ -174,8 +148,8 @@
 			}
 			else if(event.rowData.title.match(/VOLUME/)){
 				if(apiKey[cloudName] && secretKey[cloudName]){
-					var detailWin = myapp.tab.volume.createWin(cloudName,apiUrl,apiKey[cloudName],secretKey[cloudName],opt,tab);
-					tab.open(detailWin);
+					var detailWin = myapp.tab.volume.createWin(cloudName,apiUrl,apiKey[cloudName],secretKey[cloudName],opt);
+					tabGroup.activeTab.open(detailWin,{animated:true});
 				}
 				else{
 					alert("Please input API KEY & SECRET KEY.");
@@ -208,8 +182,7 @@
 				statusLabel.text = "Reloading...";
 				tableView.setContentInsets({top:60},{animated:true});
 				arrow.transform=Ti.UI.create2DMatrix();
-				data = myapp.tab.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
-				//setTimeout(myapp.tab.endReloading(tableView, statusLabel, actInd, arrow),2000);
+				data = myapp.view.beginReloading(data, count, apiUrl, apiKey, secretKey, cmdLists,opt, cloudName);
 			
 				tableView.setContentInsets({top:0},{animated:true});
 				reloading = false;
@@ -220,7 +193,6 @@
 				tableView.data = data;
 			}
 		});  	
-  		return tab;
+  		return view;
  	};
 })();
-
