@@ -1,4 +1,5 @@
 (function() {
+	
 	myapp.setting = {};
 	myapp.setting.createTab = function(){	
 		var editBtn = Titanium.UI.createButton({

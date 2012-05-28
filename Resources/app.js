@@ -6,12 +6,12 @@ Titanium.include("myapp/ui/view.js");
 Titanium.include("myapp/ui/setting.js");
 
 var cloudOrig = [
-		{title:"Tata", img:"img/in.png", url:"http://manage.iaas.tatacommunications.com:8080/client/api", hasChild:true, height:Ti.UI.FILL},
-		{title:"NineFold", img:"img/au.png", url:"https://api.ninefold.com/compute/v1.0/", hasChild:true, height:Ti.UI.FILL},
+		{title:"Contegix", img:"img/us.png", url:"https://cloud.contegix.com/portal/client/api", hasChild:true, height:Ti.UI.FILL},
 		{title:"Datapipe", img:"img/us.png", url:"https://cloud.datapipe.com/api/compute/v1", hasChild:true, height:Ti.UI.FILL},
-		{title:"NTTCom", img:"img/jp.png", url:"https://mycloud2.securesites.com/client/api", hasChild:true, height:Ti.UI.FILL},
 		{title:"IDCF", img:"img/jp.png", url:"https://api.noahcloud.jp/portal/client/api", hasChild:true, height:Ti.UI.FILL},
-		{title:"Contegix", img:"img/us.png", url:"https://cloud.contegix.com/portal/client/api", hasChild:true, height:Ti.UI.FILL}
+		{title:"NineFold", img:"img/au.png", url:"https://api.ninefold.com/compute/v1.0/", hasChild:true, height:Ti.UI.FILL},
+		{title:"NTTCom", img:"img/jp.png", url:"https://mycloud2.securesites.com/client/api", hasChild:true, height:Ti.UI.FILL},
+		{title:"Tata", img:"img/in.png", url:"http://manage.iaas.tatacommunications.com:8080/client/api", hasChild:true, height:Ti.UI.FILL}
 ];
 	
 var cloud = new Array();
