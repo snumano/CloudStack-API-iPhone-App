@@ -1,8 +1,8 @@
 (function() {
-	myapp.tab.volume = {};
+	myapp.cmd.volume = {};
 	Titanium.include("../subroutine.js");
 		
-	myapp.tab.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt){
+	myapp.cmd.volume.createWin = function(cloudName,apiUrl,apiKey,secretKey,opt){
 		var cmd = "listVolumes";
 		
 		var addBtn = Titanium.UI.createButton({
@@ -69,20 +69,20 @@
     		
     		win.add(tableView);
 
-			tableView.addEventListener('delete', function(event){
+			tableView.addEventListener('delete', function(e){
 				alert("Not implemented yet.\nNot deleted.");
 			});
-		    tableView.addEventListener('click', function(event){
+		    tableView.addEventListener('click', function(e){
     			var detailLabel = Ti.UI.createLabel({
 					color:'#999',
-					text:"id:" + json.listvolumesresponse.volume[event.index].id + "\n" +
-						"name:" + json.listvolumesresponse.volume[event.index].name + "\n" +
-						"size:" + json.listvolumesresponse.volume[event.index].size + "\n" +
-						"state:" + json.listvolumesresponse.volume[event.index].state + "\n" +
-						"type:" + json.listvolumesresponse.volume[event.index].type + "\n" +
-						"vmdisplayname:" + json.listvolumesresponse.volume[event.index].vmdisplayname + "\n" +
-						"vmname:" + json.listvolumesresponse.volume[event.index].vmname + "\n" +
-						"vmstate:" + json.listvolumesresponse.volume[event.index].vmstate,
+					text:"id:" + json.listvolumesresponse.volume[e.index].id + "\n" +
+						"name:" + json.listvolumesresponse.volume[e.index].name + "\n" +
+						"size:" + json.listvolumesresponse.volume[e.index].size + "\n" +
+						"state:" + json.listvolumesresponse.volume[e.index].state + "\n" +
+						"type:" + json.listvolumesresponse.volume[e.index].type + "\n" +
+						"vmdisplayname:" + json.listvolumesresponse.volume[e.index].vmdisplayname + "\n" +
+						"vmname:" + json.listvolumesresponse.volume[e.index].vmname + "\n" +
+						"vmstate:" + json.listvolumesresponse.volume[e.index].vmstate,
 					font:{fontSize:14,fontFamily:'Helvetica Neue'},
 					textAlign:'left',
 					top:10,
@@ -92,7 +92,7 @@
 				});
 				
 				var detailWin = Ti.UI.createWindow({
-					title: cloudName + ':VOLUME:' + json.listvolumesresponse.volume[event.index].id,
+					title: cloudName + ':VOLUME:' + json.listvolumesresponse.volume[e.index].id,
 					backgroundColor: 'white',
 					barColor:'black'
 				});
@@ -102,8 +102,8 @@
 			});
   		};
   		xhr.send();
-  		xhr.onerror = function(event){
-  			alert(event);
+  		xhr.onerror = function(e){
+  			alert(e);
        	};
        
   		return win;

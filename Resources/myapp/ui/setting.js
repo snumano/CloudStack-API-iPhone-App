@@ -148,8 +148,7 @@
 					}
 					else{
 						addCloud[e.index]['hasCheck'] = true;
-					}
-					//Ti.API.info(addCloud);			
+					}		
 					addTableView.setData(addCloud);
 				}
 			});
@@ -162,17 +161,13 @@
 			tabGroup.activeTab.open(win);
 
 			win.addEventListener('close', function(e){
-				//Ti.API.info(cloud);
 				for(var i=0;i<addCloud.length;i++){
 					if(addCloud[i]['hasCheck']){
 						addCloud[i]['hasCheck'] = false;
 						addCloud[i]['hasChild'] = true;
-						//Ti.API.info(addCloud[i]);
 						cloud.push(addCloud[i]);
-						//Ti.API.info(cloud);
 					}
 				}
-				//Ti.API.info(cloud);
 				tableView.setData(cloud);
 			});
 
@@ -185,7 +180,6 @@
 			win.setLeftNavButton(infoBtn);
 			win.setRightNavButton(editBtn);
 			tableView.editing = false;
-			//Ti.API.info(cloud);
 			Ti.App.Properties.setString('cloud', JSON.stringify(cloud));
 			viewArray = new Array();
 			for(var i=0;i<cloud.length;i++){
@@ -202,7 +196,6 @@
 		
 		var apiKey = new Object(); 
 		var secretKey = new Object();
-
 		var infoBtn = Ti.UI.createButton({
 			systemButton:Titanium.UI.iPhone.SystemButton.INFO_LIGHT,
 			height:11,
@@ -240,20 +233,17 @@
     		window:win
 		});
 		tableView.addEventListener('move',function(e){
-			Titanium.API.info("move - row="+e.row+", index="+e.index+", section="+e.section+", from = "+e.fromIndex);
+			//Ti.API.info("move - row="+e.row+", index="+e.index+", section="+e.section+", from = "+e.fromIndex);
 			var tmp = cloud[e.index];
 			cloud[e.index] = cloud[e.fromIndex];
 			cloud[e.fromIndex] = tmp;
-			//Ti.API.info(cloud);
 		});
 		tableView.addEventListener('delete',function(e){
-			Titanium.API.info("move - row="+e.row+", index="+e.index+", section="+e.section+", from = "+e.fromIndex);
+			//Ti.API.info("move - row="+e.row+", index="+e.index+", section="+e.section+", from = "+e.fromIndex);
 			cloud.splice(e.index,1);
-			//Ti.API.info(cloud);
 		});
-		tableView.addEventListener('click', function(event){			
-			//Ti.API.info('index:' + event.index);
-			cloudName = cloud[event.index]['title'];
+		tableView.addEventListener('click', function(e){			
+			cloudName = cloud[e.index]['title'];
 			
 			var scrollView = Titanium.UI.createScrollView({
     			contentWidth:'auto',
@@ -305,8 +295,6 @@
 			});
 			ta1.addEventListener('blur',function(){
     			apiKey[cloudName] = ta1.value.replace(/\s|\n/g,"");
-   	 			//Ti.API.info('cloudName:' + cloudName);
-    			//Ti.API.info('apiKey:' + apiKey[cloudName]);
     			Ti.App.Properties.setString('apiKey', JSON.stringify(apiKey));
 			});
 			scrollView.add(ta1);
@@ -347,8 +335,6 @@
 			});
 			ta2.addEventListener('blur',function(){
     			secretKey[cloudName] = ta2.value.replace(/\s|\n/g,"");
-    			//Ti.API.info('cloudName:' + cloudName);
-    			//Ti.API.info('secretKey:' + secretKey[cloudName]);
 	    		Ti.App.Properties.setString('secretKey', JSON.stringify(secretKey));
 			});		
 			scrollView.add(ta2);
