@@ -3,6 +3,7 @@ var myapp = {};
 Titanium.include("lib/sha1.js");
 Titanium.include("myapp/ui/view.js");
 Titanium.include("myapp/ui/setting.js");
+Titanium.include("myapp/ui/map.js");
 
 var cmdLists = {
 	'VM':{
@@ -42,6 +43,7 @@ Ti.UI.setBackgroundColor('#000');
 
 var tabGroup = Ti.UI.createTabGroup();
 var tabSetting = myapp.setting.createTab();
+var tabMap = myapp.map.createTab();
 
 var viewArray = new Array();
 var btn = new Array();
@@ -79,11 +81,12 @@ cloudWin.add(scrollView);
 
 var tabCloud = Ti.UI.createTab({
 	title:'Cloud',
-	icon:'img/light_globe.png',
+	icon:'img/Cloud.png',
 	window:cloudWin
 });
 
 tabGroup.addTab(tabCloud);
+tabGroup.addTab(tabMap); 
 tabGroup.addTab(tabSetting); 
 
 if(Ti.App.Properties.getString('addCloud')){

@@ -207,7 +207,7 @@
     			title:'Info',
 			});
 			var webView = Ti.UI.createWebView({
-				html:'<html><body style="font-size:15;font-weight:bold;font-family:Helvetica Neue;text-align:center;"><div style="color:white;">App for CloudStack API<br><br><a href="http://twitter.com/CS_API_App" target="_blank">@CS_API_App</a><br><a href="http://twitter.com/shugonumano" target="_blank">@shugonumano</a><br><br><a href="https://github.com/snumano/CloudStack-API-iPhone-App" target="_blank">github</a></div></body></html>',
+				html:'<html><body style="font-size:24;font-weight:bold;font-family:Helvetica Neue;text-align:center;"><div style="color:white;">App for CloudStack API<br>' + Ti.App.version + '<br><br><a href="http://twitter.com/CS_API_App" target="_blank">@CS_API_App</a><br><a href="http://twitter.com/shugonumano" target="_blank">@shugonumano</a><br><br><a href="https://github.com/snumano/CloudStack-API-iPhone-App" target="_blank">github</a></div></body></html>',
 				backgroundColor:'black',
 			});
 			win.add(webView);
